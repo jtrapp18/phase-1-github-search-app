@@ -1,43 +1,61 @@
 
+const addToList = (item) => {
+    const searchType = document.querySelector("#search-by").value;
 
-const addUser = user => {
-    const userList = document.querySelector("#user-list");
+    const list = searchType=== "users" ? document.querySelector("#user-list") : document.querySelector("#repos-list");
+    const itemKey = searchType=== "users" ? "login" : "name"
 
     const newUser = document.createElement("li");
-    newUser.className = user.id;
-    newUser.textContent = user.login;
+    newUser.textContent = item[itemKey];
+
+    if (searchType === "repositories") {
+        // if searching repositories, add user information
+        newUser.textContent = `${newUser.textContent}, owned by: ${item.owner.login}`
+    }
 
     newUser.addEventListener("click", () => {
-        renderRepos(user.login);
+        renderRepos(item[itemKey]);
+
+        const listItems = Array.from(list.children);
+        listItems.forEach(li => {
+            if (li.textContent === item[itemKey]) {
+                li.className = "selected"
+            }
+            else {
+                li.className = ""
+            }
+        })
     })
 
-    userList.append(newUser);
+    list.append(newUser);
 }
 
-const searchUser = () => {
+const searchInfo = () => {
     const searchForm = document.querySelector("#github-form")
     
     searchForm.addEventListener("submit", (e)=> {
         e.preventDefault();
 
         const searchTerm = searchForm.search.value;
-        renderUsers(searchTerm);
+        renderSearchList(searchTerm);
     })
 }
 
-const renderUsers = (searchTerm='octocat') => {
+const renderSearchList = (searchTerm='') => {
     document.querySelector("#user-list").innerHTML = ""
+    document.querySelector("#repos-list").innerHTML = ""
 
+    const searchType = document.querySelector("#search-by").value
     const gitURL = "https://api.github.com/search/";
 
-    fetch(`${gitURL}users?q=${searchTerm}`)
+    fetch(`${gitURL}${searchType}?q=${searchTerm}`)
     .then(res => {
         if (!res.ok) {
         throw new Error(`HTTP error! Status: ${res.status}`);
         }
         return res.json();
     })
-    .then(data => data.items.forEach(addUser))
+    .then(data => data.items.forEach(addToList))
     }
 
 function renderRepo(repo) {
@@ -78,6 +96,5 @@ function renderRepos(userName) {
     }
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    renderUsers();
-    searchUser();
+    searchInfo();
 })

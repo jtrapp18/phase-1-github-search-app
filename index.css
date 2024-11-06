@@ -11,3 +11,34 @@
 ul {
   list-style: none;
 }
+
+.selected {
+  color: red;
+  font-weight: bold;
+}
+
+#user-list li {
+  cursor: pointer;
+}
+
+#search-header {
+  display: flex;
+}
+
+body {
+  font-family: 'Cambria';
+}
+
+h2, select {
+  font-weight: bold;
+  font-size: 40px;
+  font-family: 'Cambria';
+  padding: 5px;
+  margin-bottom: 20px;
+  margin-top: 0px;
+}
+
+select {
+  background-color: lightblue;
+  cursor: pointer;
+}
